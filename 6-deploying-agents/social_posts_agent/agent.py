@@ -8,8 +8,8 @@ from google.adk.agents import Agent, ParallelAgent, SequentialAgent
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.tools import google_search
 
-linkedInModel = LiteLlm(model=os.environ.get("OPENAI_MODEL"))
-instagramModel = LiteLlm(model=os.environ.get("CLAUDE_MODEL"))
+linkedInModel = LiteLlm(model=os.environ.get("GOOGLE_GENAI_MODEL"))
+instagramModel = LiteLlm(model=os.environ.get("GOOGLE_GENAI_MODEL"))
 
 print("Google GenAI Model:", os.environ.get("GOOGLE_GENAI_MODEL"))
 print("Google GenAI Use VertexAI:", os.environ.get("GOOGLE_GENAI_USE_VERTEXAI"))

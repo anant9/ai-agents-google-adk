@@ -1,0 +1,161 @@
+INFO:     Started server process [1039086]
+INFO:     Waiting for application startup.
+
++-----------------------------------------------------------------------------+
+| ADK Web Server started                                                      |
+|                                                                             |
+| For local testing, access at http://localhost:8000.                         |
++-----------------------------------------------------------------------------+
+
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:38752 - "GET /dev-ui?app=8-rag-with-adk HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38752 - "GET /list-apps?relative_path=./ HTTP/1.1" 200 OK
+2025-08-16 13:40:33,640 - INFO - fast_api.py:313 - New session created
+INFO:     127.0.0.1:38752 - "POST /apps/8-rag-with-adk/users/user/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38766 - "GET /apps/8-rag-with-adk/eval_sets HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/uvicorn/protocols/http/h11_impl.py", line 403, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/starlette/applications.py", line 112, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 187, in __call__
+    raise exc
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/starlette/routing.py", line 714, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/starlette/routing.py", line 734, in app
+    await route.handle(scope, receive, send)
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/starlette/routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 214, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/starlette/concurrency.py", line 37, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/anyio/to_thread.py", line 56, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2470, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 967, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/google/adk/cli/fast_api.py", line 365, in list_eval_sets
+    for file in os.listdir(eval_set_file_path):
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/ahsan/projects/ai-agents-google-adk/8-rag-with-adk'
+INFO:     127.0.0.1:38752 - "GET /apps/8-rag-with-adk/users/user/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38752 - "GET /apps/8-rag-with-adk/users/user/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38752 - "POST /run_sse HTTP/1.1" 200 OK
+2025-08-16 13:40:35,458 - INFO - envs.py:54 - No .env file found for 8-rag-with-adk
+2025-08-16 13:40:35,458 - ERROR - fast_api.py:637 - Error in event_generator: No module named '8-rag-with-adk'
+Traceback (most recent call last):
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/google/adk/cli/fast_api.py", line 625, in event_generator
+    runner = await _get_runner_async(req.app_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/google/adk/cli/fast_api.py", line 796, in _get_runner_async
+    root_agent = await _get_root_agent_async(app_name)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ahsan/projects/ai-agents-google-adk/.venv/lib/python3.12/site-packages/google/adk/cli/fast_api.py", line 773, in _get_root_agent_async
+    agent_module = importlib.import_module(app_name)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1324, in _find_and_load_unlocked
+ModuleNotFoundError: No module named '8-rag-with-adk'
+INFO:     127.0.0.1:38752 - "GET /apps/8-rag-with-adk/users/user/sessions/45da822a-2ad9-479d-9770-31a2e05779b0 HTTP/1.1" 200 OK
+2025-08-16 13:40:40,099 - INFO - fast_api.py:313 - New session created
+INFO:     127.0.0.1:38752 - "POST /apps/rag_with_adk/users/user/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38752 - "GET /apps/rag_with_adk/eval_sets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38752 - "GET /apps/rag_with_adk/users/user/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38752 - "POST /run_sse HTTP/1.1" 200 OK
+2025-08-16 13:40:42,026 - INFO - envs.py:47 - Loaded .env file for rag_with_adk at /home/ahsan/projects/ai-agents-google-adk/rag_with_adk/.env
+2025-08-16 13:40:42,062 - INFO - _api_client.py:414 - The project/location from the environment variables will take precedence over the API key from the environment variables.
+2025-08-16 13:40:42,076 - INFO - google_llm.py:83 - Sending out request, model: gemini-2.5-flash, backend: vertex, stream: False
+2025-08-16 13:40:42,077 - INFO - google_llm.py:89 - 
+LLM Request:
+-----------------------------------------------------------
+System Instruction:
+You are an agent. Your internal name is "RagAgent".
+
+ The description about you is "Vertex AI RAG Agent"
+-----------------------------------------------------------
+Contents:
+{"parts":[{"text":"Add this as corpus https://docs.google.com/document/d/1cxgQx3h52QzC-R6qnJM62zMl6rLHbSrr2dyTLXtdX-0/edit?usp=sharing, name it mastering_angular_signals_book"}],"role":"user"}
+-----------------------------------------------------------
+Functions:
+rag_query: {'corpus_name': {'type': <Type.STRING: 'STRING'>}, 'query': {'type': <Type.STRING: 'STRING'>}} -> {'type': <Type.OBJECT: 'OBJECT'>}
+list_corpora: {} -> {'type': <Type.OBJECT: 'OBJECT'>}
+create_corpus: {'corpus_name': {'type': <Type.STRING: 'STRING'>}} -> {'type': <Type.OBJECT: 'OBJECT'>}
+add_data: {'corpus_name': {'type': <Type.STRING: 'STRING'>}, 'paths': {'items': {'type': <Type.STRING: 'STRING'>}, 'type': <Type.ARRAY: 'ARRAY'>}} -> {'type': <Type.OBJECT: 'OBJECT'>}
+get_corpus_info: {'corpus_name': {'type': <Type.STRING: 'STRING'>}} -> {'type': <Type.OBJECT: 'OBJECT'>}
+delete_corpus: {'corpus_name': {'type': <Type.STRING: 'STRING'>}, 'confirm': {'type': <Type.BOOLEAN: 'BOOLEAN'>}} -> {'type': <Type.OBJECT: 'OBJECT'>}
+delete_document: {'corpus_name': {'type': <Type.STRING: 'STRING'>}, 'document_id': {'type': <Type.STRING: 'STRING'>}, 'confirm': {'type': <Type.BOOLEAN: 'BOOLEAN'>}} -> {'type': <Type.OBJECT: 'OBJECT'>}
+-----------------------------------------------------------
+
+2025-08-16 13:40:42,077 - INFO - models.py:6666 - AFC is enabled with max remote calls: 10.
+2025-08-16 13:40:45,153 - INFO - _client.py:1740 - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1beta1/projects/test-project-adk-462116/locations/us-central1/publishers/google/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2025-08-16 13:40:45,158 - WARNING - types.py:4134 - Warning: there are non-text parts in the response: ['function_call'],returning concatenated text result from text parts,check out the non text parts for full response from model.
+2025-08-16 13:40:48,064 - INFO - _api_client.py:414 - The project/location from the environment variables will take precedence over the API key from the environment variables.
+2025-08-16 13:40:48,076 - INFO - models.py:6666 - AFC is enabled with max remote calls: 10.
+build graph
+INFO:     127.0.0.1:60324 - "GET /apps/rag_with_adk/users/user/sessions/4b093540-1042-4f39-87ef-1566f4bcc17d/events/VNPy0GAw/graph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60318 - "GET /debug/trace/VNPy0GAw HTTP/1.1" 404 Not Found
+2025-08-16 13:40:51,320 - INFO - _client.py:1740 - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1beta1/projects/test-project-adk-462116/locations/us-central1/publishers/google/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2025-08-16 13:40:51,326 - WARNING - types.py:4134 - Warning: there are non-text parts in the response: ['function_call'],returning concatenated text result from text parts,check out the non text parts for full response from model.
+2025-08-16 13:40:52,019 - INFO - _api_client.py:414 - The project/location from the environment variables will take precedence over the API key from the environment variables.
+2025-08-16 13:40:52,032 - INFO - models.py:6666 - AFC is enabled with max remote calls: 10.
+build graph
+INFO:     127.0.0.1:35146 - "GET /apps/rag_with_adk/users/user/sessions/4b093540-1042-4f39-87ef-1566f4bcc17d/events/k0ppCjyo/graph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35134 - "GET /debug/trace/k0ppCjyo HTTP/1.1" 404 Not Found
+build graph
+INFO:     127.0.0.1:35146 - "GET /apps/rag_with_adk/users/user/sessions/4b093540-1042-4f39-87ef-1566f4bcc17d/events/uC6PcJrT/graph HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35134 - "GET /debug/trace/uC6PcJrT HTTP/1.1" 404 Not Found
+2025-08-16 13:40:55,581 - INFO - _client.py:1740 - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1beta1/projects/test-project-adk-462116/locations/us-central1/publishers/google/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:38752 - "GET /apps/rag_with_adk/users/user/sessions/4b093540-1042-4f39-87ef-1566f4bcc17d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45642 - "POST /run_sse HTTP/1.1" 200 OK
+2025-08-16 13:42:36,953 - INFO - envs.py:47 - Loaded .env file for rag_with_adk at /home/ahsan/projects/ai-agents-google-adk/rag_with_adk/.env
+2025-08-16 13:42:36,956 - INFO - _api_client.py:414 - The project/location from the environment variables will take precedence over the API key from the environment variables.
+2025-08-16 13:42:36,971 - INFO - models.py:6666 - AFC is enabled with max remote calls: 10.
+2025-08-16 13:42:40,876 - INFO - _client.py:1740 - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1beta1/projects/test-project-adk-462116/locations/us-central1/publishers/google/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2025-08-16 13:42:40,881 - WARNING - types.py:4134 - Warning: there are non-text parts in the response: ['function_call'],returning concatenated text result from text parts,check out the non text parts for full response from model.
+2025-08-16 13:42:41,598 - INFO - _api_client.py:414 - The project/location from the environment variables will take precedence over the API key from the environment variables.
+2025-08-16 13:42:41,610 - INFO - models.py:6666 - AFC is enabled with max remote calls: 10.
+2025-08-16 13:42:45,023 - INFO - _client.py:1740 - HTTP Request: POST https://us-central1-aiplatform.googleapis.com/v1beta1/projects/test-project-adk-462116/locations/us-central1/publishers/google/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:45642 - "GET /apps/rag_with_adk/users/user/sessions/4b093540-1042-4f39-87ef-1566f4bcc17d HTTP/1.1" 200 OK
+INFO:     100.87.31.166:58613 - "GET /status HTTP/1.1" 404 Not Found
+INFO:     100.87.31.166:58612 - "GET /logs HTTP/1.1" 404 Not Found
+INFO:     100.87.31.166:59164 - "GET /status HTTP/1.1" 404 Not Found
+INFO:     100.87.31.166:59165 - "GET /logs HTTP/1.1" 404 Not Found
