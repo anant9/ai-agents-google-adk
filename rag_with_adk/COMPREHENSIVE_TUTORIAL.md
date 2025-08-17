@@ -209,4 +209,18 @@ This flow demonstrates:
 
 This robust, multi-step process is what makes the final agent reliable and easy to use.
 
+---
+
+### Tool Implementation Deep Dive (`rag_query.py`)
+
+The `rag_query` tool is the core of the agent's purpose: answering questions. Its flow is similar to `add_data`, relying on the robust `utils.py` for corpus identification.
+
+![RAG Query Flow](rag_query.png)
+
+This flow highlights:
+1.  **Seamless Querying:** The user asks a natural question.
+2.  **Correct Corpus Identification:** The tool uses the same robust lookup in `utils.py` to find the right knowledge base.
+3.  **Direct RAG Engine Query:** The tool calls the `rag.retrieval_query` function, which performs the complex task of searching the document vectors and returning the most relevant text passages.
+4.  **Grounded Answers:** The agent uses the text returned by the tool to formulate an answer that is grounded in the provided documents.
+
 ```
