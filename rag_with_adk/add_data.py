@@ -1,95 +1,61 @@
-# rag_agent/tools/add_data.py
 
 import re
-from typing import Dict, List, Union
-
+import os
+from typing import Dict, List
 from google.adk.tools.tool_context import ToolContext
-from .utils import check_corpus_exists, get_corpus_resource_name
+from .utils import get_corpus_resource_name
 from vertexai import rag
-
 from . import config
+from google.cloud import storage
+from google.oauth2 import service_account
 
+KEY_FILE_PATH = os.path.join(os.path.dirname(__file__), 'rag-accessor-key.json')
 
 def add_data(corpus_name: str, paths: List[str], tool_context: ToolContext) -> dict:
     """
-    Add new data sources to a Vertex AI RAG corpus.
-
-    Args:
-        corpus_name (str): The name of the corpus to add data to. If empty, the current corpus will be used.
-        paths (List[str]): List of URLs or GCS paths to add to the corpus.
-        tool_context (ToolContext): The tool context for state management
-
-    Returns:
-        dict: Information about the added data and status
+    Add new data sources from Google Cloud Storage to a Vertex AI RAG corpus.
     """
-    # ... (code for checking if corpus exists and validating inputs) ...
+    
+    # Get the full resource name for the corpus.
+    corpus_resource_name = get_corpus_resource_name(corpus_name)
+    if not corpus_resource_name:
+        return {
+            "status": "error",
+            "message": f"Corpus '{corpus_name}' could not be found. Please check the name and try again. You can use the list_corpora function to see available corpora."
+        }
 
-    # Pre-process paths to validate and convert Google Docs URLs to Drive format if needed
-    validated_paths = []
-    invalid_paths = []
-    conversions = []
-
+    # Validate all paths are GCS paths.
     for path in paths:
-        # ... (code for checking valid string) ...
-
-        # Check for Google Docs/Sheets/Slides URLs and convert them to Drive format
-        docs_match = re.match(
-            r"https?:\/\/docs\.google\.com\/(?:document|spreadsheets|presentation)\/d\/([a-zA-Z0-9-_]+)",
-            path,
-        )
-        if docs_match:
-            file_id = docs_match.group(1)
-            drive_url = f"https://drive.google.com/file/d/{file_id}/view"
-            validated_paths.append(drive_url)
-            if drive_url != path:
-                conversions.append({path: drive_url})
-            continue
-
-        # Check for valid Drive URL format
-        drive_match = re.match(
-            r"https?:\/\/drive\.google\.com\/(?:file\/d\/|open\?id=)([a-zA-Z0-9-_]+)",
-            path,
-        )
-        if drive_match:
-            file_id = drive_match.group(1)
-            # Normalize to the standard Drive URL format
-            drive_url = f"https://drive.google.com/file/d/{file_id}/view"
-            validated_paths.append(drive_url)
-            if drive_url != path:
-                conversions.append({path: drive_url})
-            continue
-        
-        # Check for GCS paths
-        if path.startswith("gs://"):
-            validated_paths.append(path)
-            continue
-        
-        # If we're here, the path wasn't in a recognized format
-        invalid_paths.append((path, "Invalid format"))
-
-    # ... (code for handling invalid paths) ...
+        if not path.startswith("gs://"):
+            return {"status": "error", "message": f"Unsupported path format: {path}. Please provide a GCS path (e.g., gs://your-bucket/your-file.pdf)."}
 
     try:
-        # Get the corpus resource name
-        corpus_resource_name = get_corpus_resource_name(corpus_name)
+        # Authenticate using the service account key file.
+        credentials = service_account.Credentials.from_service_account_file(KEY_FILE_PATH)
+        storage_client = storage.Client(credentials=credentials)
+        
+        # This is a lightweight check to ensure the files exist before starting the import.
+        for path in paths:
+            bucket_name = path.split('/')[2]
+            blob_name = '/'.join(path.split('/')[3:])
+            bucket = storage_client.bucket(bucket_name)
+            blob = bucket.blob(blob_name)
+            if not blob.exists():
+                 return {"status": "error", "message": f"The file at GCS path '{path}' does not exist or you do not have permission to access it."}
 
-        # Set up chunking configuration
+        # Proceed with the import
         transformation_config = rag.TransformationConfig(
             chunking_config=rag.ChunkingConfig(
                 chunk_size=config.DEFAULT_CHUNK_SIZE,
                 chunk_overlap=config.DEFAULT_CHUNK_OVERLAP,
             )
         )
-
-        # Import files to the corpus
         import_result = rag.import_files(
             corpus_resource_name,
-            validated_paths,
+            paths,
             transformation_config=transformation_config,
             max_embedding_requests_per_min=config.DEFAULT_EMBEDDING_REQUESTS_PER_MIN,
         )
-
-        # ... (code to build success message and return status) ...
-
+        return {"status": "success", "message": f"Successfully started import for {len(paths)} file(s) into corpus '{corpus_name}'.", "import_result": str(import_result)}
     except Exception as e:
-        return {"status": "error", "message": f"Error adding data to corpus: {str(e)}"}
+        return {"status": "error", "message": f"An unexpected error occurred while adding data to the corpus: {e}"}

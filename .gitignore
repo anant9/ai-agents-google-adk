@@ -2,3 +2,5 @@
 .venv
 venv_*
 __pycache__
+rag_with_adk/rag-accessor-key.json
+adk_web.log

@@ -4,7 +4,7 @@ python-dotenv
 litellm
 pydantic
 google-cloud-aiplatform[adk,agent_engines]
-
 google-genai
 gitpython
 google-cloud-storage
+requests
