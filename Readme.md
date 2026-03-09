@@ -80,6 +80,62 @@ marketing-agents-adk/
 │   └── instruction.py      # Text files containing detailed instructions for each agent
 ```
 
+## Additional Agents
+
+### IdeationAgent
+
+This repository includes an IdeationAgent, managed by the request_coordinator_agent, responsible for creative copywriting tasks.
+
+- **Role:** Creative Copywriter
+- **Responsibilities:**
+    - Generate text concepts, taglines, and claims.
+    - Read `brief` and `research_insights` from Session Context.
+- **Input:** Briefing Instructions
+- **Output:** Draft Concepts (Text)
+
+The IdeationAgent works alongside the ResearchAgent and other units, enabling parallel execution of creative and research tasks. Its outputs are used by the Manager Agent to assemble final campaign deliverables.
+
+**Tip:** You can further enhance the IdeationAgent by adding tools for brainstorming, style adaptation, or integrating external creative APIs. Consider documenting its workflow and how it interacts with other agents for clarity.
+
+### VisualAgent
+
+This repository includes a VisualAgent, managed by the request_coordinator_agent, responsible for generating image assets for campaign concepts.
+
+- **Role:** Art Director
+- **Responsibilities:**
+    - Create visual assets (Moodboards, Product Renders) matching the text concepts.
+    - Execute in parallel with Ideation where possible.
+- **Input:** Visual Brief
+- **Output:** Image Assets
+- **Tool Used:** `generate_concept_images` (see ResearchAgent/tools.py)
+
+The VisualAgent works alongside the IdeationAgent, enabling parallel creative and visual asset generation. Its outputs are used by the Manager Agent to assemble final campaign deliverables.
+
+**Tip:** You can further enhance the VisualAgent by adding style configuration, prompt templates, or integrating additional image generation APIs. Documenting example prompts and asset types can help users understand its capabilities.
+
+
+### ResearchAgent
+
+This repository also includes a standalone ResearchAgent that combines internet search and lightweight RAG over uploaded documents.
+
+- Folder: [ResearchAgent](ResearchAgent)
+- Entry point: [ResearchAgent/agent.py](ResearchAgent/agent.py)
+- Tools:
+    - `google_search` for web research
+    - `rag_over_uploaded_doc` for doc-based retrieval
+
+Example (conceptual):
+
+```python
+from ResearchAgent.tools import rag_over_uploaded_doc
+
+result = rag_over_uploaded_doc(
+        query="Summarize key findings",
+        doc_path="./docs/brief.txt",
+)
+print(result)
+```
+
 ## How to Run the Agent (Part 1)
 
 You can run and interact with the agent as explained in the video:
