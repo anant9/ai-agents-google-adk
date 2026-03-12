@@ -17,7 +17,8 @@ from ResearchAgent.config import (
     MODEL_NAME,
 )
 from ResearchAgent.instructions import RESEARCH_AGENT_INSTRUCTION
-from ResearchAgent.tools import rag_over_uploaded_doc
+from ResearchAgent.tools import rag_over_uploaded_doc, update_generation_state
+from google.adk.tools import FunctionTool
 
 
 _RAG_GATE_LAST_USER_TEXT_KEY = "research_rag_gate_last_user_text"
@@ -101,11 +102,22 @@ def before_tool_callback_rag_first(
         rag_checked_for_current_text = bool(
             rag_done_for_text and rag_done_for_text == current_user_text
         )
-        if not rag_checked_for_current_text:
+        
+        # Bypass RAG requirement if user explicitly says they don't have a document or wants web search
+        user_text_lower = current_user_text.lower()
+        explicit_bypass = (
+            "no document" in user_text_lower or 
+            "don't have a document" in user_text_lower or 
+            "web search" in user_text_lower or
+            "search the web" in user_text_lower
+        )
+        
+        if not rag_checked_for_current_text and not explicit_bypass:
             return {
                 "result": (
                     "RAG_FIRST_REQUIRED: Call rag_over_uploaded_doc before google_search "
-                    "for this user request."
+                    "for this user request. If the user explicitly stated they have no document, "
+                    "you may proceed."
                 )
             }
         tool_context.state[_WEB_CALLED_KEY] = True
@@ -141,7 +153,7 @@ if ENABLE_RAG_RESEARCH and ENABLE_WEB_RESEARCH:
         name="ResearchAgent",
         model=MODEL_NAME,
         instruction=RESEARCH_AGENT_INSTRUCTION,
-        tools=[rag_over_uploaded_doc, google_search_tool],
+        tools=[rag_over_uploaded_doc, google_search_tool, FunctionTool(update_generation_state)],
         output_key="research_response",
         before_agent_callback=before_agent_callback_rag_gate,
         before_model_callback=before_model_callback_rag_gate,
@@ -157,7 +169,7 @@ elif ENABLE_RAG_RESEARCH and not ENABLE_WEB_RESEARCH:
             "Use rag_over_uploaded_doc for all evidence and do not use web sources. "
             "If the requested fact is not present in the document/reference docs, clearly say so."
         ),
-        tools=[rag_over_uploaded_doc],
+        tools=[rag_over_uploaded_doc, FunctionTool(update_generation_state)],
         output_key="research_response",
         before_model_callback=before_model_callback_rag_only,
     )
@@ -171,7 +183,7 @@ elif ENABLE_WEB_RESEARCH and not ENABLE_RAG_RESEARCH:
             "You are a research assistant in web-only mode. "
             "Use google_search for evidence and provide citations with URLs."
         ),
-        tools=[google_search_tool],
+        tools=[google_search_tool, FunctionTool(update_generation_state)],
         output_key="research_response",
         before_model_callback=before_model_callback_web_only,
     )

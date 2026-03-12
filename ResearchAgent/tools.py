@@ -72,7 +72,7 @@ def _get_reference_doc_path_from_env() -> Optional[str]:
     return None
 
 
-def _get_reference_doc_dir_candidates() -> List[str]:
+def _get_reference_doc_dir_candidates(session_id: Optional[str] = None) -> List[str]:
     env_dir = os.environ.get("RESEARCH_REFERENCE_DOC_DIR")
     cwd = os.getcwd()
     project_root = _get_project_root_dir()
@@ -80,6 +80,18 @@ def _get_reference_doc_dir_candidates() -> List[str]:
     candidate_dirs: List[str] = []
     if env_dir:
         candidate_dirs.extend(_expand_path_candidates(env_dir))
+
+    if session_id:
+        candidate_dirs.extend(
+            [
+                os.path.abspath(os.path.join(project_root, "reference_docs", session_id)),
+                os.path.abspath(os.path.join(cwd, "ResearchAgent", "reference_docs", session_id)),
+                os.path.abspath(os.path.join(cwd, "reference_docs", session_id)),
+                os.path.abspath(
+                    os.path.join(os.path.dirname(cwd), "ResearchAgent", "reference_docs", session_id)
+                ),
+            ]
+        )
 
     candidate_dirs.extend(
         [
@@ -104,8 +116,8 @@ def _get_reference_doc_dir_candidates() -> List[str]:
     return deduped
 
 
-def _get_reference_doc_dir() -> str:
-    candidate_dirs = _get_reference_doc_dir_candidates()
+def _get_reference_doc_dir(session_id: Optional[str] = None) -> str:
+    candidate_dirs = _get_reference_doc_dir_candidates(session_id)
     for candidate in candidate_dirs:
         if os.path.isdir(candidate):
             return candidate
@@ -113,7 +125,7 @@ def _get_reference_doc_dir() -> str:
     return candidate_dirs[0]
 
 
-def _resolve_reference_doc_path(doc_path: Optional[str]) -> Optional[str]:
+def _resolve_reference_doc_path(doc_path: Optional[str], session_id: Optional[str] = None) -> Optional[str]:
     if doc_path and doc_path.strip():
         # Clean aggressive LLM hallucinations like "doc- brand.txt" or "file: brand.txt"
         clean_path = doc_path.strip()
@@ -126,7 +138,7 @@ def _resolve_reference_doc_path(doc_path: Optional[str]) -> Optional[str]:
         
         # Fallback: check inside reference doc directories
         base_name = os.path.basename(clean_path)
-        for ref_dir in _get_reference_doc_dir_candidates():
+        for ref_dir in _get_reference_doc_dir_candidates(session_id):
             if not os.path.isdir(ref_dir):
                 continue
             cand = os.path.join(ref_dir, base_name)
@@ -146,7 +158,7 @@ def _resolve_reference_doc_path(doc_path: Optional[str]) -> Optional[str]:
     if env_doc_path and os.path.exists(env_doc_path):
         return env_doc_path
 
-    reference_dir = _get_reference_doc_dir()
+    reference_dir = _get_reference_doc_dir(session_id)
     if not os.path.isdir(reference_dir):
         return None
 
@@ -352,7 +364,12 @@ def rag_over_uploaded_doc(
     genai.configure(api_key=api_key)
 
     source_id: str
-    resolved_doc_path = _resolve_reference_doc_path(doc_path)
+    
+    session_id = None
+    if tool_context and hasattr(tool_context, "session") and tool_context.session:
+        session_id = tool_context.session.id
+
+    resolved_doc_path = _resolve_reference_doc_path(doc_path, session_id)
     if document_text:
         text = document_text
         source_id = f"inline_{hashlib.sha1(document_text.encode('utf-8')).hexdigest()}"
@@ -366,7 +383,7 @@ def rag_over_uploaded_doc(
         return {
             "error": "Provide either doc_path/document_text or configure RESEARCH_REFERENCE_DOC_PATH / RESEARCH_REFERENCE_DOC_DIR.",
             "cwd": os.getcwd(),
-            "searched_reference_dirs": _get_reference_doc_dir_candidates(),
+            "searched_reference_dirs": _get_reference_doc_dir_candidates(session_id),
         }
 
     chunks = _chunk_text(text, chunk_size=chunk_size, overlap=overlap)
@@ -466,7 +483,7 @@ def rag_over_uploaded_doc(
             "vector_db": "chroma",
             "embedding_model": _get_active_embedding_model(),
             "vector_db_dir": _get_vector_db_dir(),
-            "reference_doc_dir": _get_reference_doc_dir(),
+            "reference_doc_dir": _get_reference_doc_dir(session_id),
             "total_chunks": len(chunks),
             "retrieval_mode": "keyword_fallback",
             "warning": f"Semantic retrieval unavailable, using keyword fallback: {str(exc)}",
@@ -514,21 +531,27 @@ async def generate_concept_images(prompt: str, tool_context: ToolContext = None,
     from google import genai as new_genai
     from google.genai import types as new_types
     
-    # Clamp number_of_images to [1, 4] to satisfy Imagen model constraints
-    number_of_images = max(1, min(4, int(number_of_images)))
+    target_number = max(1, min(12, int(number_of_images)))
     
     client = new_genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
     
-    response = client.models.generate_images(
-        model='imagen-4.0-generate-001',
-        prompt=prompt,
-        config=new_types.GenerateImagesConfig(number_of_images=number_of_images)
+    all_generated_images = []
+    images_left = target_number
+    
+    while images_left > 0:
+        batch_size = min(4, images_left)
+        response = client.models.generate_images(
+            model='imagen-4.0-generate-001',
+            prompt=prompt,
+            config=new_types.GenerateImagesConfig(number_of_images=batch_size)
         )
+        all_generated_images.extend(response.generated_images)
+        images_left -= batch_size
     
     save_dir = "concept_outputs"
     os.makedirs(save_dir, exist_ok=True)
     
-    for i, generated_image in enumerate(response.generated_images):
+    for i, generated_image in enumerate(all_generated_images):
         file_name = f"concept_{i+1}_{uuid.uuid4().hex[:8]}.png"
         
         # 1. Local Disk Save
@@ -554,12 +577,15 @@ async def generate_concept_images(prompt: str, tool_context: ToolContext = None,
                 # In demo mode, there might not be an artifact service attached to the runner
                 print(f"Skipping save_artifact: {e}")
 
+    return f"Successfully generated {len(all_generated_images)} image(s) and saved them as artifacts."
+
 from pydantic import BaseModel, Field
 
+from typing import Dict, Any
+
 class ProjectBrief(BaseModel):
-    objective: str = Field(default="", description="The main goal or objective of the marketing campaign.")
-    target_audience: str = Field(default="", description="The specific demographic or group the campaign is targeting.")
-    tone_and_style: str = Field(default="", description="The desired tone, mood, and visual style of the campaign.")
+    intent: str = Field(default="", description="The specific intent selected by the user (e.g., 'Visual Moodboards').")
+    parameters: Dict[str, Any] = Field(default_factory=dict, description="A dictionary of key-value pairs representing the answers to the intent's questions.")
     miscellaneous: str = Field(default="", description="Any other constraints, requirements, or notes provided by the user.")
 
 async def update_brief(
@@ -567,7 +593,7 @@ async def update_brief(
     locked: bool,
     tool_context: ToolContext = None
 ) -> str:
-    """Updates the project brief in the shared session context. ONLY call this tool with locked=True if the user has provided ALL required fields (objective, target_audience, tone_and_style)."""
+    """Updates the project brief in the shared session context. ONLY call this tool with locked=True if the user has provided ALL mandatory fields for the selected intent."""
     if tool_context is None:
         return "Warning: ToolContext not available."
     
@@ -576,9 +602,8 @@ async def update_brief(
         brief = ProjectBrief(**brief)
         
     tool_context.state["brief"] = {
-        "objective": brief.objective,
-        "target_audience": brief.target_audience,
-        "tone_and_style": brief.tone_and_style,
+        "intent": brief.intent,
+        "parameters": brief.parameters,
         "miscellaneous": brief.miscellaneous,
         "locked": locked
     }

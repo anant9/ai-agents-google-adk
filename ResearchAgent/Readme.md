@@ -46,11 +46,14 @@ Responsible for imagery and moodboards.
 1. **Environment Variables:** Copy `.env.example` to `.env` and configure your API keys.
     * `GOOGLE_API_KEY`: Required for Gemini model access.
     * `ENABLE_RAG_RESEARCH` / `ENABLE_WEB_RESEARCH`: Toggle flags to enable specific tool usage.
-2. **Reference Docs:** Place any text documents (e.g., `brand_guidelines.txt`) into the `reference_docs/` folder. The RAG tool is natively configured to look here if a bare filename is passed.
-3. **Execution:** 
+2. **Dynamic Brief Configuration:** The Manager Agent dynamically asks briefing questions based on the user's *intent* (e.g. Ideation vs Moodboards). The 8 intents and their 10 specific questions (mandatory and optional) can be entirely customized by editing `ResearchAgent/brief_config.py`.
+3. **Reference Docs:** Place any text documents (e.g., `brand_guidelines.txt`) into the `reference_docs/` folder. The RAG tool is natively configured to look here if a bare filename is passed.
+4. **Execution:** 
     * Run locally via the ADK Developer UI: `adk web`
 
 ## Central Reference Docs
-- Default folder: `ResearchAgent/reference_docs`
+- Default folder: `ResearchAgent/reference_docs` (Global context)
+- Session-specific folder: `ResearchAgent/reference_docs/<session_id>` (Takes precedence over the global folder if it exists. Used for chat-specific RAG docs)
+  - **Auto-Creation**: This folder is automatically generated on your hard drive the moment you click "New Session" in the ADK Developer UI. 
 - Supported extensions for auto-pick: `.txt`, `.md`, `.json`, `.csv`, `.log`, `.pdf`
 - Runtime discovery is resilient to different working directories and checks multiple candidate paths; when not found, tool output includes `searched_reference_dirs` for debugging.

@@ -1,0 +1,1106 @@
+{
+  "schema_name": "concept_capture_config",
+  "schema_version": "v1",
+  "supported_concept_types": [
+    "product_concept",
+    "feature_innovation_concept",
+    "claim_concept",
+    "visual_image_pack_concept",
+    "ad_communication_concept",
+    "value_proposition_naming_concept"
+  ],
+  "common_fields": [
+    {
+      "key": "brand_name",
+      "label": "Brand Name",
+      "description": "Brand, client brand, product line, or working brand associated with the concept.",
+      "capture_intent": "Understand whether the concept should be anchored to an existing brand or generated more neutrally.",
+      "value_type": "string",
+      "required_for_minimum_generation": false,
+      "used_for_generation": [
+        "Align tone and framing with the brand context",
+        "Make concepts feel branded rather than generic when relevant"
+      ],
+      "fallback_behavior": "Treat as neutral or unbranded concept generation.",
+      "sample_questions": [
+        "Which brand or product line is this concept for?",
+        "Should I create this for a specific brand, or keep it brand-neutral?"
+      ]
+    },
+    {
+      "key": "category",
+      "label": "Category",
+      "description": "The category or domain in which the concept should be created.",
+      "capture_intent": "Anchor the concept in the correct market and product space.",
+      "value_type": "string",
+      "required_for_minimum_generation": true,
+      "used_for_generation": [
+        "Define the concept territory",
+        "Ensure relevant language, use cases, and category logic"
+      ],
+      "fallback_behavior": "Must be inferred from context or clarified before meaningful concept generation.",
+      "sample_questions": [
+        "What category is this concept for?",
+        "Which product or service space should I generate ideas in?"
+      ]
+    },
+    {
+      "key": "market",
+      "label": "Market",
+      "description": "Country, region, or market where the concept will be explored or tested.",
+      "capture_intent": "Understand cultural and market context.",
+      "value_type": "string",
+      "required_for_minimum_generation": false,
+      "used_for_generation": [
+        "Adapt vocabulary and market framing",
+        "Avoid culturally inappropriate assumptions"
+      ],
+      "fallback_behavior": "Use neutral market assumptions.",
+      "sample_questions": [
+        "Which market or country should this concept be created for?",
+        "Is this intended for a specific region or audience market?"
+      ]
+    },
+    {
+      "key": "research_objective",
+      "label": "Research Objective",
+      "description": "What the researcher wants to learn, compare, optimize, or test through these concepts.",
+      "capture_intent": "Understand why the concepts are being generated.",
+      "value_type": "string",
+      "required_for_minimum_generation": false,
+      "used_for_generation": [
+        "Shape the breadth and style of concepts",
+        "Optimize for testing readiness versus early exploration"
+      ],
+      "fallback_behavior": "Assume early-stage concept exploration.",
+      "sample_questions": [
+        "What are you hoping to learn or test with these concepts?",
+        "Is the goal idea exploration, concept testing, or refinement?"
+      ]
+    },
+    {
+      "key": "business_objective",
+      "label": "Business Objective",
+      "description": "Commercial or strategic goal behind the concept generation.",
+      "capture_intent": "Understand what business direction the concept should support.",
+      "value_type": "string",
+      "required_for_minimum_generation": false,
+      "used_for_generation": [
+        "Bias concept direction toward the desired strategic goal",
+        "Adjust value framing and tone"
+      ],
+      "fallback_behavior": "Generate without explicit business bias.",
+      "sample_questions": [
+        "What business goal should these concepts support?",
+        "Should the concepts help with premiumization, differentiation, trial, or something else?"
+      ]
+    },
+    {
+      "key": "target_audience",
+      "label": "Target Audience",
+      "description": "Who the concept is for, including demographic, behavioral, attitudinal, or need-state detail.",
+      "capture_intent": "Identify who should find the concept relevant.",
+      "value_type": "object_or_string",
+      "required_for_minimum_generation": false,
+      "used_for_generation": [
+        "Tailor the problem, tone, and benefit framing",
+        "Improve relevance and resonance"
+      ],
+      "fallback_behavior": "Use a broad category-relevant audience.",
+      "sample_questions": [
+        "Who is the concept meant for?",
+        "Can you describe the target consumer or user group?"
+      ]
+    },
+    {
+      "key": "consumer_need_or_tension",
+      "label": "Consumer Need or Tension",
+      "description": "Underlying pain point, unmet need, desire, or friction that the concept should address.",
+      "capture_intent": "Understand the human problem or motivation behind the concept.",
+      "value_type": "string",
+      "required_for_minimum_generation": false,
+      "used_for_generation": [
+        "Create stronger concept relevance",
+        "Build concepts around a meaningful consumer insight"
+      ],
+      "fallback_behavior": "Infer broad category-level needs if possible.",
+      "sample_questions": [
+        "What consumer problem or need should this concept address?",
+        "What tension, frustration, or desire is most important here?"
+      ]
+    },
+    {
+      "key": "must_include",
+      "label": "Must Include",
+      "description": "Words, features, claims, messages, assets, ingredients, or cues that must appear.",
+      "capture_intent": "Capture mandatory constraints or inclusions.",
+      "value_type": "array_string",
+      "required_for_minimum_generation": false,
+      "used_for_generation": [
+        "Constrain output to required elements",
+        "Make outputs more usable for downstream research"
+      ],
+      "fallback_behavior": "No mandatory inclusions applied.",
+      "sample_questions": [
+        "Are there any things that must be included in the concepts?",
+        "Do you have any mandatory words, features, claims, or cues I should use?"
+      ]
+    },
+    {
+      "key": "must_avoid",
+      "label": "Must Avoid",
+      "description": "Words, territories, tones, visuals, claims, or ideas that should not appear.",
+      "capture_intent": "Set exclusions and brand or legal boundaries.",
+      "value_type": "array_string",
+      "required_for_minimum_generation": false,
+      "used_for_generation": [
+        "Reduce off-brief outputs",
+        "Avoid risky, repetitive, or brand-inappropriate directions"
+      ],
+      "fallback_behavior": "No exclusions applied.",
+      "sample_questions": [
+        "Is there anything I should avoid in the concepts?",
+        "Any words, tones, territories, or ideas that should not be used?"
+      ]
+    },
+    {
+      "key": "reference_inputs",
+      "label": "Reference Inputs",
+      "description": "Existing concepts, packs, ads, claims, visuals, or competitor references provided by the user.",
+      "capture_intent": "Ground concept generation in prior materials or reference territory.",
+      "value_type": "array_string",
+      "required_for_minimum_generation": false,
+      "used_for_generation": [
+        "Use existing material as inspiration or grounding",
+        "Avoid duplicating prior directions when needed"
+      ],
+      "fallback_behavior": "Generate from first principles.",
+      "sample_questions": [
+        "Do you have any reference concepts, claims, packs, or examples I should build from?",
+        "Should I take inspiration from any existing material or competitor examples?"
+      ]
+    },
+    {
+      "key": "output_preferences",
+      "label": "Output Preferences",
+      "description": "Preferences for number of concepts, structure, tone, length, or formatting.",
+      "capture_intent": "Understand how the output should be packaged.",
+      "value_type": "object",
+      "required_for_minimum_generation": false,
+      "used_for_generation": [
+        "Format the final output correctly",
+        "Balance depth, breadth, and tone"
+      ],
+      "fallback_behavior": "Default to 3 concise, usable concepts.",
+      "sample_questions": [
+        "How would you like the concepts to be presented?",
+        "Do you want short concept options, detailed writeups, or something in between?"
+      ]
+    }
+  ],
+  "concept_type_fields": {
+    "product_concept": {
+      "purpose": "Generate a full product or service concept.",
+      "minimum_generation_rule": "Need category and at least one of target audience, consumer need or tension, main benefit, or product format.",
+      "fields": [
+        {
+          "key": "product_format",
+          "label": "Product Format",
+          "description": "What the product or service actually is, such as beverage, snack bar, app feature bundle, serum, or subscription plan.",
+          "capture_intent": "Define the concrete offer form.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Define what the concept is",
+            "Keep ideas realistic and category-relevant"
+          ],
+          "fallback_behavior": "Infer likely format from the category.",
+          "sample_questions": [
+            "What kind of product or service should this concept be?",
+            "Do you already know the format, such as a drink, snack, app, or service?"
+          ]
+        },
+        {
+          "key": "problem_to_solve",
+          "label": "Problem to Solve",
+          "description": "The specific consumer problem or pain point the product or service should solve.",
+          "capture_intent": "Clarify the main problem the concept addresses.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Create a sharper concept narrative",
+            "Increase relevance"
+          ],
+          "fallback_behavior": "Use broad category-level problems.",
+          "sample_questions": [
+            "What problem should this product solve?",
+            "What is frustrating or missing for consumers today?"
+          ]
+        },
+        {
+          "key": "main_benefit",
+          "label": "Main Benefit",
+          "description": "The primary benefit or promise of the concept.",
+          "capture_intent": "Define the central value proposition.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Form the main proposition",
+            "Focus concept direction"
+          ],
+          "fallback_behavior": "Infer from problem or category context.",
+          "sample_questions": [
+            "What is the main benefit this concept should deliver?",
+            "If the consumer remembers one promise, what should it be?"
+          ]
+        },
+        {
+          "key": "secondary_benefits",
+          "label": "Secondary Benefits",
+          "description": "Additional supporting benefits that complement the main promise.",
+          "capture_intent": "Capture extra value layers around the concept.",
+          "value_type": "array_string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Add richness to the concept",
+            "Help create differentiated routes"
+          ],
+          "fallback_behavior": "Keep the concept focused on the main benefit only.",
+          "sample_questions": [
+            "Are there any secondary benefits you also want included?",
+            "Beyond the main benefit, what else should this concept deliver?"
+          ]
+        },
+        {
+          "key": "reason_to_believe",
+          "label": "Reason to Believe",
+          "description": "Proof points, ingredients, features, mechanisms, or evidence that make the concept believable.",
+          "capture_intent": "Understand what makes the promise credible.",
+          "value_type": "array_string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Support the main benefit",
+            "Increase believability and specificity"
+          ],
+          "fallback_behavior": "Use softer support language without strong proof claims.",
+          "sample_questions": [
+            "Why should consumers believe this concept?",
+            "Are there any ingredients, features, or proof points that support the promise?"
+          ]
+        },
+        {
+          "key": "usage_occasion",
+          "label": "Usage Occasion",
+          "description": "When, where, or in what situation the concept would be used.",
+          "capture_intent": "Understand the usage context and need-state.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Make the concept more vivid and situational",
+            "Improve contextual relevance"
+          ],
+          "fallback_behavior": "Use common category occasions.",
+          "sample_questions": [
+            "When or where would people use this concept?",
+            "Is there a specific occasion or moment this should be designed for?"
+          ]
+        },
+        {
+          "key": "differentiation",
+          "label": "Differentiation",
+          "description": "What should make the concept stand out from existing alternatives.",
+          "capture_intent": "Identify the uniqueness of the concept.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Avoid generic concepts",
+            "Sharpen distinctiveness"
+          ],
+          "fallback_behavior": "Differentiate using tone, audience, or benefit mix.",
+          "sample_questions": [
+            "What should make this concept feel different from what already exists?",
+            "Where should the uniqueness of this concept come from?"
+          ]
+        },
+        {
+          "key": "price_positioning",
+          "label": "Price Positioning",
+          "description": "Whether the concept should feel premium, mainstream, affordable, or luxury.",
+          "capture_intent": "Understand the intended value tier.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Adjust tone and value framing",
+            "Set expectation level"
+          ],
+          "fallback_behavior": "Use mainstream positioning.",
+          "sample_questions": [
+            "Should this concept feel premium, mainstream, or value-led?",
+            "What kind of price or value positioning should I assume?"
+          ]
+        }
+      ]
+    },
+    "feature_innovation_concept": {
+      "purpose": "Generate a feature, capability, ingredient, or innovation concept.",
+      "minimum_generation_rule": "Need category or parent product and at least one of innovation focus, functional value, or current consumer pain.",
+      "fields": [
+        {
+          "key": "parent_product_or_brand",
+          "label": "Parent Product or Brand",
+          "description": "The existing product, service, or brand this innovation belongs to.",
+          "capture_intent": "Understand the base offer the innovation builds on.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Keep the innovation connected to the base offer",
+            "Maintain continuity with current brand or product logic"
+          ],
+          "fallback_behavior": "Treat innovation as more standalone.",
+          "sample_questions": [
+            "Is this innovation tied to an existing product or brand?",
+            "What current product or offer should this new feature build on?"
+          ]
+        },
+        {
+          "key": "innovation_focus",
+          "label": "Innovation Focus",
+          "description": "What is actually new, such as a feature, ingredient, technology, workflow, mechanism, or enhancement.",
+          "capture_intent": "Define the specific innovation at the center of the concept.",
+          "value_type": "string",
+          "required_for_minimum_generation": true,
+          "used_for_generation": [
+            "Anchor the concept in the new element",
+            "Prevent the concept from becoming too broad"
+          ],
+          "fallback_behavior": "Infer from context if possible, otherwise clarify.",
+          "sample_questions": [
+            "What is the actual innovation you want to explore?",
+            "What is new or different in this feature or idea?"
+          ]
+        },
+        {
+          "key": "current_consumer_pain",
+          "label": "Current Consumer Pain",
+          "description": "The problem in the current experience that the innovation improves.",
+          "capture_intent": "Understand why the innovation matters.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Create a stronger before-and-after story",
+            "Improve strategic relevance"
+          ],
+          "fallback_behavior": "Use broad category-level friction points.",
+          "sample_questions": [
+            "What problem with the current experience should this innovation solve?",
+            "What is not working well enough today that this new feature should improve?"
+          ]
+        },
+        {
+          "key": "functional_value",
+          "label": "Functional Value",
+          "description": "The practical or performance benefit delivered by the innovation.",
+          "capture_intent": "Define the concrete improvement created by the innovation.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "State the practical value clearly",
+            "Keep the concept easy to understand"
+          ],
+          "fallback_behavior": "Use general performance improvement language.",
+          "sample_questions": [
+            "What practical improvement should this innovation deliver?",
+            "What does this feature do better for the user?"
+          ]
+        },
+        {
+          "key": "emotional_value",
+          "label": "Emotional Value",
+          "description": "How the innovation should make the user feel.",
+          "capture_intent": "Capture the emotional upside beyond utility.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Add resonance beyond the functional story",
+            "Support richer concept writing"
+          ],
+          "fallback_behavior": "Focus on the functional story only.",
+          "sample_questions": [
+            "How should this innovation make the user feel?",
+            "Is there an emotional payoff you want this feature to create?"
+          ]
+        },
+        {
+          "key": "proof_or_mechanism",
+          "label": "Proof or Mechanism",
+          "description": "How the innovation works, including science, technology, design logic, or operating mechanism.",
+          "capture_intent": "Make the innovation more credible and explainable.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Improve believability",
+            "Reduce vagueness"
+          ],
+          "fallback_behavior": "Use simpler non-technical explanation.",
+          "sample_questions": [
+            "How does this innovation actually work?",
+            "Is there a mechanism, technology, or logic behind it that I should reflect?"
+          ]
+        },
+        {
+          "key": "fit_with_existing_brand",
+          "label": "Fit with Existing Brand",
+          "description": "Whether the innovation should feel fully on-brand, adjacent, or more disruptive.",
+          "capture_intent": "Understand the desired level of stretch versus familiarity.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Balance novelty and brand consistency",
+            "Adjust how radical the concept feels"
+          ],
+          "fallback_behavior": "Assume moderate fit with the existing brand.",
+          "sample_questions": [
+            "Should this innovation feel fully on-brand or more disruptive?",
+            "How close to the current brand or product should this new idea feel?"
+          ]
+        },
+        {
+          "key": "barrier_or_confusion_to_address",
+          "label": "Barrier or Confusion to Address",
+          "description": "Any skepticism, misunderstanding, or friction the concept should proactively address.",
+          "capture_intent": "Identify barriers that may limit adoption or understanding.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Preempt objections",
+            "Make the concept easier to understand and accept"
+          ],
+          "fallback_behavior": "Do not explicitly address barriers unless inferred.",
+          "sample_questions": [
+            "Is there any skepticism or confusion this concept should address?",
+            "What might stop people from immediately understanding or believing this innovation?"
+          ]
+        }
+      ]
+    },
+    "claim_concept": {
+      "purpose": "Generate or refine benefit, proof, or communication claims.",
+      "minimum_generation_rule": "Need category or product context and at least one of benefit to communicate or claim goal.",
+      "fields": [
+        {
+          "key": "claim_goal",
+          "label": "Claim Goal",
+          "description": "What the claim should achieve, such as attention, reassurance, premiumization, simplification, or differentiation.",
+          "capture_intent": "Understand the job the claim needs to do.",
+          "value_type": "string",
+          "required_for_minimum_generation": true,
+          "used_for_generation": [
+            "Set the strategic direction of the claim",
+            "Balance persuasion and clarity"
+          ],
+          "fallback_behavior": "Default to clear and persuasive wording.",
+          "sample_questions": [
+            "What should the claim achieve?",
+            "Should the claim grab attention, build trust, simplify the message, or do something else?"
+          ]
+        },
+        {
+          "key": "product_or_brand_context",
+          "label": "Product or Brand Context",
+          "description": "The product, service, or brand the claim belongs to.",
+          "capture_intent": "Anchor the claim in the correct context.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Keep claim language category-appropriate",
+            "Improve relevance"
+          ],
+          "fallback_behavior": "Use category-level context.",
+          "sample_questions": [
+            "What product or brand is this claim for?",
+            "Which offer or variant should the claim be tied to?"
+          ]
+        },
+        {
+          "key": "benefit_to_communicate",
+          "label": "Benefit to Communicate",
+          "description": "The core benefit or promise the claim should express.",
+          "capture_intent": "Define the central message of the claim.",
+          "value_type": "string",
+          "required_for_minimum_generation": true,
+          "used_for_generation": [
+            "Create the core wording territory",
+            "Keep claims focused"
+          ],
+          "fallback_behavior": "Infer from product context if possible.",
+          "sample_questions": [
+            "What benefit should the claim communicate?",
+            "What is the main promise or outcome the claim needs to express?"
+          ]
+        },
+        {
+          "key": "claim_type",
+          "label": "Claim Type",
+          "description": "Functional, emotional, scientific, natural, superiority, convenience, value, or sustainability claim type.",
+          "capture_intent": "Define the territory and framing style of the claim.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Choose the right claim architecture",
+            "Match wording style to intent"
+          ],
+          "fallback_behavior": "Use a neutral benefit-led claim style.",
+          "sample_questions": [
+            "What kind of claim are you looking for?",
+            "Should the claim feel more functional, emotional, scientific, natural, or something else?"
+          ]
+        },
+        {
+          "key": "substantiation_level",
+          "label": "Substantiation Level",
+          "description": "How strongly the benefit is supported, such as strong proof, partial proof, soft support, or exploratory.",
+          "capture_intent": "Control how aggressive or cautious the wording should be.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Prevent overclaiming",
+            "Set confidence level in wording"
+          ],
+          "fallback_behavior": "Use softer, more cautious wording.",
+          "sample_questions": [
+            "How strongly is this claim supported?",
+            "Do you have strong proof behind this claim, partial support, or is it still exploratory?"
+          ]
+        },
+        {
+          "key": "mandatory_words",
+          "label": "Mandatory Words",
+          "description": "Words or phrases that must appear in the claim output.",
+          "capture_intent": "Capture required lexical constraints.",
+          "value_type": "array_string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Force required terminology into outputs",
+            "Improve usability for client needs"
+          ],
+          "fallback_behavior": "No required words.",
+          "sample_questions": [
+            "Are there any words or phrases that must appear in the claim?",
+            "Do you have any required wording I should include?"
+          ]
+        },
+        {
+          "key": "prohibited_words",
+          "label": "Prohibited Words",
+          "description": "Words or phrases that should not appear in the claim output.",
+          "capture_intent": "Capture wording exclusions and risk boundaries.",
+          "value_type": "array_string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Avoid risky or unwanted phrasing",
+            "Support compliance and brand fit"
+          ],
+          "fallback_behavior": "No prohibited words.",
+          "sample_questions": [
+            "Are there any words I should avoid using in the claim?",
+            "Do you want me to avoid any specific terms, tones, or phrases?"
+          ]
+        },
+        {
+          "key": "claim_tone",
+          "label": "Claim Tone",
+          "description": "Tone such as clinical, premium, simple, emotional, assertive, soft, or modern.",
+          "capture_intent": "Define the stylistic tone of the claim.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Match brand and audience tone",
+            "Adjust wording style"
+          ],
+          "fallback_behavior": "Use clear mainstream tone.",
+          "sample_questions": [
+            "What tone should the claim have?",
+            "Should the claim feel clinical, premium, simple, emotional, or something else?"
+          ]
+        },
+        {
+          "key": "variants_needed",
+          "label": "Variants Needed",
+          "description": "How many claim options or variants should be generated.",
+          "capture_intent": "Set breadth of output.",
+          "value_type": "integer",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Determine how many options to generate",
+            "Control breadth versus depth"
+          ],
+          "fallback_behavior": "Generate 5 options.",
+          "sample_questions": [
+            "How many claim options would you like?",
+            "Do you want just a few focused claims or a broader set of variants?"
+          ]
+        }
+      ]
+    },
+    "visual_image_pack_concept": {
+      "purpose": "Generate visual, image, key visual, or pack direction concepts.",
+      "minimum_generation_rule": "Need category or asset type and at least one of message to visualize, visual mood, or brand context.",
+      "fields": [
+        {
+          "key": "asset_type",
+          "label": "Asset Type",
+          "description": "The visual output type, such as image, pack, front-of-pack, hero shot, key visual, usage visual, or moodboard.",
+          "capture_intent": "Define the exact visual asset being conceptualized.",
+          "value_type": "string",
+          "required_for_minimum_generation": true,
+          "used_for_generation": [
+            "Determine output format and structure",
+            "Separate pack logic from scene logic"
+          ],
+          "fallback_behavior": "Default to a general visual direction.",
+          "sample_questions": [
+            "What kind of visual output do you want to create?",
+            "Is this for an image, a pack direction, a key visual, or something else?"
+          ]
+        },
+        {
+          "key": "message_to_visualize",
+          "label": "Message to Visualize",
+          "description": "What the visual should communicate immediately or make people feel.",
+          "capture_intent": "Define the communication task of the visual.",
+          "value_type": "string",
+          "required_for_minimum_generation": true,
+          "used_for_generation": [
+            "Translate message into visual cues",
+            "Keep the concept strategically grounded"
+          ],
+          "fallback_behavior": "Use category-typical message framing.",
+          "sample_questions": [
+            "What should the visual communicate right away?",
+            "What is the key message or impression the image or pack should convey?"
+          ]
+        },
+        {
+          "key": "visual_mood",
+          "label": "Visual Mood",
+          "description": "The desired emotional feel, such as energetic, calming, premium, playful, indulgent, natural, or clinical.",
+          "capture_intent": "Define the emotional feel of the visual concept.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Shape tone and feeling",
+            "Guide scene and styling direction"
+          ],
+          "fallback_behavior": "Use a neutral positive mood.",
+          "sample_questions": [
+            "What mood should the visual create?",
+            "Should the visual feel energetic, premium, calming, playful, or something else?"
+          ]
+        },
+        {
+          "key": "visual_style",
+          "label": "Visual Style",
+          "description": "Style direction such as realistic, illustrative, minimal, lifestyle, bold, premium, or modern.",
+          "capture_intent": "Define how the visual should look stylistically.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Guide visual language and art direction",
+            "Differentiate routes aesthetically"
+          ],
+          "fallback_behavior": "Use realistic mainstream style.",
+          "sample_questions": [
+            "What kind of visual style do you want?",
+            "Should this feel realistic, minimal, bold, illustrative, lifestyle-led, or something else?"
+          ]
+        },
+        {
+          "key": "people_presence",
+          "label": "People Presence",
+          "description": "Whether people should appear in the visual, what kind of people, or whether it should be product-only.",
+          "capture_intent": "Control the role of people in the visual.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Guide composition and storytelling style",
+            "Set human versus product emphasis"
+          ],
+          "fallback_behavior": "Use category norms.",
+          "sample_questions": [
+            "Should people appear in the visual?",
+            "Do you want this to be product-only, or include people and usage context?"
+          ]
+        },
+        {
+          "key": "key_visual_elements",
+          "label": "Key Visual Elements",
+          "description": "Objects, scenes, ingredients, icons, colors, pack elements, or cues that should appear.",
+          "capture_intent": "Capture the visual building blocks that matter most.",
+          "value_type": "array_string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Guide concrete visual composition",
+            "Make outputs more directly usable"
+          ],
+          "fallback_behavior": "Use broad category-relevant cues.",
+          "sample_questions": [
+            "What key visual elements should be included?",
+            "Are there any ingredients, objects, scenes, or pack cues you want featured?"
+          ]
+        },
+        {
+          "key": "visual_exclusions",
+          "label": "Visual Exclusions",
+          "description": "Objects, colors, scenes, styles, or cues that should not appear.",
+          "capture_intent": "Capture visual exclusions and boundaries.",
+          "value_type": "array_string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Avoid off-brief visual routes",
+            "Reduce unusable outputs"
+          ],
+          "fallback_behavior": "No visual exclusions applied.",
+          "sample_questions": [
+            "Is there anything I should avoid visually?",
+            "Any colors, scenes, elements, or styles that should not appear?"
+          ]
+        },
+        {
+          "key": "brand_visual_cues",
+          "label": "Brand Visual Cues",
+          "description": "Colors, design codes, shapes, typography feel, architecture, or assets associated with the brand.",
+          "capture_intent": "Keep the visual concept aligned with brand identity when needed.",
+          "value_type": "array_string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Maintain brand fit",
+            "Make concepts more deployment-friendly"
+          ],
+          "fallback_behavior": "Use broad market-fit cues rather than explicit brand codes.",
+          "sample_questions": [
+            "Are there any brand visual cues I should reflect?",
+            "Do you have colors, design codes, or pack cues that should guide the concept?"
+          ]
+        },
+        {
+          "key": "realism_level",
+          "label": "Realism Level",
+          "description": "Whether the visual should feel highly realistic, semi-aspirational, or idealized.",
+          "capture_intent": "Control realism versus aspiration in the concept.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Adjust scene framing and tone",
+            "Set the level of polish and fantasy"
+          ],
+          "fallback_behavior": "Use commercially realistic framing.",
+          "sample_questions": [
+            "Should the visual feel very realistic or more aspirational?",
+            "Do you want this concept grounded in reality or more idealized?"
+          ]
+        }
+      ]
+    },
+    "ad_communication_concept": {
+      "purpose": "Generate ad routes, communication concepts, campaign territories, or creative platforms.",
+      "minimum_generation_rule": "Need category or audience context and at least one of communication task, single-minded message, or main benefit.",
+      "fields": [
+        {
+          "key": "channel_or_context",
+          "label": "Channel or Context",
+          "description": "The communications environment, such as TV, digital video, social, ecommerce, in-store, CRM, or website.",
+          "capture_intent": "Understand where the communication will live.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Adapt energy, format, and style",
+            "Make routes more channel-appropriate"
+          ],
+          "fallback_behavior": "Use channel-agnostic communication framing.",
+          "sample_questions": [
+            "Where will this communication concept be used?",
+            "Is this for TV, social, digital, ecommerce, in-store, or something else?"
+          ]
+        },
+        {
+          "key": "communication_task",
+          "label": "Communication Task",
+          "description": "What the communication should do, such as build awareness, explain innovation, create desire, or address skepticism.",
+          "capture_intent": "Define the job of the communication.",
+          "value_type": "string",
+          "required_for_minimum_generation": true,
+          "used_for_generation": [
+            "Set strategic purpose",
+            "Shape the route logic"
+          ],
+          "fallback_behavior": "Default to awareness plus persuasion.",
+          "sample_questions": [
+            "What should the communication achieve?",
+            "Is the goal to drive awareness, explain something new, build desire, or overcome skepticism?"
+          ]
+        },
+        {
+          "key": "single_minded_message",
+          "label": "Single-Minded Message",
+          "description": "The one thing the audience should remember after seeing the communication.",
+          "capture_intent": "Define the key takeaway.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Anchor the communication route",
+            "Keep creative thinking focused"
+          ],
+          "fallback_behavior": "Infer from benefit or objective.",
+          "sample_questions": [
+            "What is the one thing people should remember?",
+            "If the audience takes away only one message, what should it be?"
+          ]
+        },
+        {
+          "key": "supporting_messages",
+          "label": "Supporting Messages",
+          "description": "Secondary messages that support the main communication idea.",
+          "capture_intent": "Capture message hierarchy beyond the main takeaway.",
+          "value_type": "array_string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Add depth to the route",
+            "Support more complete creative directions"
+          ],
+          "fallback_behavior": "Keep the route tightly focused on one message.",
+          "sample_questions": [
+            "Are there any supporting messages that should sit under the main idea?",
+            "What else should the communication mention besides the core takeaway?"
+          ]
+        },
+        {
+          "key": "barrier_to_overcome",
+          "label": "Barrier to Overcome",
+          "description": "An objection, misunderstanding, inertia, or skepticism the communication should address.",
+          "capture_intent": "Identify what is getting in the way of persuasion.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Strengthen persuasion strategy",
+            "Make communication more strategically useful"
+          ],
+          "fallback_behavior": "No explicit barrier handling.",
+          "sample_questions": [
+            "Is there any barrier or objection this communication should tackle?",
+            "What might stop people from responding positively to this message?"
+          ]
+        },
+        {
+          "key": "desired_emotional_response",
+          "label": "Desired Emotional Response",
+          "description": "The feeling the communication should evoke, such as trust, excitement, confidence, relief, craving, or pride.",
+          "capture_intent": "Define the intended emotional effect of the communication.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Shape tone and creative style",
+            "Improve emotional resonance"
+          ],
+          "fallback_behavior": "Use a broadly positive emotional tone.",
+          "sample_questions": [
+            "How should the audience feel after seeing this communication?",
+            "What emotional response are you aiming for, such as trust, excitement, confidence, or something else?"
+          ]
+        },
+        {
+          "key": "call_to_action_or_behavior",
+          "label": "Call to Action or Behavior",
+          "description": "The desired next step or behavior, such as learn more, buy, try, switch, subscribe, or reconsider.",
+          "capture_intent": "Identify the intended behavioral outcome.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Make concepts more action-oriented",
+            "Support stronger communication logic"
+          ],
+          "fallback_behavior": "No explicit CTA included.",
+          "sample_questions": [
+            "What action should the audience take next?",
+            "Do you want this communication to drive trial, purchase, learning, switching, or something else?"
+          ]
+        },
+        {
+          "key": "mandatories",
+          "label": "Mandatories",
+          "description": "Required inclusions such as taglines, legal lines, product shots, assets, offers, or spokespersons.",
+          "capture_intent": "Capture mandatory elements for the communication route.",
+          "value_type": "array_string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Keep the outputs usable and execution-aware",
+            "Preserve required client inputs"
+          ],
+          "fallback_behavior": "No mandatories applied.",
+          "sample_questions": [
+            "Are there any mandatory elements the communication must include?",
+            "Do you have any required taglines, assets, offers, or legal lines I should account for?"
+          ]
+        }
+      ]
+    },
+    "value_proposition_naming_concept": {
+      "purpose": "Generate value propositions, offer framing, names, taglines, or message platforms.",
+      "minimum_generation_rule": "Need output type and at least one of core value proposition, entity to name, or target perception.",
+      "fields": [
+        {
+          "key": "output_needed",
+          "label": "Output Needed",
+          "description": "Type of verbal asset needed, such as value proposition, offer framing, product name, service name, tagline, or message platform.",
+          "capture_intent": "Define what kind of output should be generated.",
+          "value_type": "string",
+          "required_for_minimum_generation": true,
+          "used_for_generation": [
+            "Choose the right output structure",
+            "Prevent mixing different verbal tasks unintentionally"
+          ],
+          "fallback_behavior": "Default to value proposition plus naming ideas.",
+          "sample_questions": [
+            "What kind of output do you need here?",
+            "Are you looking for a value proposition, a name, a tagline, or something else?"
+          ]
+        },
+        {
+          "key": "entity_to_name_or_frame",
+          "label": "Entity to Name or Frame",
+          "description": "What exactly is being named or framed, such as product, service, bundle, feature, platform, or line.",
+          "capture_intent": "Anchor the naming or framing task to the right object.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Keep the outputs relevant and specific",
+            "Avoid abstract naming without a target entity"
+          ],
+          "fallback_behavior": "Use a generic placeholder entity.",
+          "sample_questions": [
+            "What exactly needs to be named or framed?",
+            "Is this for a product, service, feature, bundle, or something else?"
+          ]
+        },
+        {
+          "key": "core_value_proposition",
+          "label": "Core Value Proposition",
+          "description": "What the offer fundamentally gives the user and why it is worth choosing.",
+          "capture_intent": "Define the underlying meaning the naming or proposition should express.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Create propositions and names with substance",
+            "Prevent empty or purely stylistic outputs"
+          ],
+          "fallback_behavior": "Infer broad value from category and audience context.",
+          "sample_questions": [
+            "What is the core value this offer provides?",
+            "Why should people choose this over other options?"
+          ]
+        },
+        {
+          "key": "target_perception",
+          "label": "Target Perception",
+          "description": "How the offer or name should be perceived, such as premium, expert, modern, accessible, trustworthy, natural, or bold.",
+          "capture_intent": "Define the intended impression created by the proposition or name.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Guide semantic territory and tone",
+            "Shape how polished, simple, or premium outputs feel"
+          ],
+          "fallback_behavior": "Use clear and broadly positive perception.",
+          "sample_questions": [
+            "How should this name or proposition feel to people?",
+            "Should it come across as premium, modern, trustworthy, accessible, or something else?"
+          ]
+        },
+        {
+          "key": "value_signal",
+          "label": "Value Signal",
+          "description": "The value dimension to emphasize, such as affordability, expertise, speed, convenience, quality, or performance.",
+          "capture_intent": "Understand which aspect of value should be highlighted most strongly.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Shape proposition language",
+            "Prioritize the right commercial signal"
+          ],
+          "fallback_behavior": "Use balanced quality-plus-benefit framing.",
+          "sample_questions": [
+            "What kind of value should this signal most strongly?",
+            "Should this feel more about affordability, convenience, quality, expertise, speed, or something else?"
+          ]
+        },
+        {
+          "key": "naming_style",
+          "label": "Naming Style",
+          "description": "Preferred naming approach such as descriptive, evocative, simple, coined, technical, metaphorical, or benefit-led.",
+          "capture_intent": "Guide the naming architecture and creative style.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Control naming direction",
+            "Generate more relevant option sets"
+          ],
+          "fallback_behavior": "Generate mixed naming styles.",
+          "sample_questions": [
+            "What naming style do you want me to explore?",
+            "Should the names feel descriptive, evocative, coined, simple, or something else?"
+          ]
+        },
+        {
+          "key": "must_include_words",
+          "label": "Must Include Words",
+          "description": "Words, stems, semantic cues, or themes that should appear in the output.",
+          "capture_intent": "Apply lexical constraints to naming or proposition writing.",
+          "value_type": "array_string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Constrain outputs to required language",
+            "Improve alignment to client requirements"
+          ],
+          "fallback_behavior": "No lexical requirement.",
+          "sample_questions": [
+            "Are there any words or themes that must be included?",
+            "Do you want certain words, stems, or cues reflected in the naming or proposition?"
+          ]
+        },
+        {
+          "key": "must_avoid_words",
+          "label": "Must Avoid Words",
+          "description": "Words, stems, or semantic territories that should be excluded.",
+          "capture_intent": "Avoid unwanted lexical or semantic directions.",
+          "value_type": "array_string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Prevent off-brand or overused directions",
+            "Avoid semantic collisions"
+          ],
+          "fallback_behavior": "No exclusions.",
+          "sample_questions": [
+            "Are there any words or themes I should avoid?",
+            "Do you want me to stay away from any naming territories or expressions?"
+          ]
+        },
+        {
+          "key": "architecture_constraints",
+          "label": "Architecture Constraints",
+          "description": "Structural rules such as masterbrand endorsement, family naming logic, line extension rules, or character limits.",
+          "capture_intent": "Keep naming or framing outputs usable within brand architecture.",
+          "value_type": "string",
+          "required_for_minimum_generation": false,
+          "used_for_generation": [
+            "Make outputs more deployment-ready",
+            "Respect naming system constraints"
+          ],
+          "fallback_behavior": "No architecture constraints applied.",
+          "sample_questions": [
+            "Are there any naming system rules or structural constraints I should follow?",
+            "Should the output fit within an existing brand architecture or naming pattern?"
+          ]
+        }
+      ]
+    }
+  }
+}
