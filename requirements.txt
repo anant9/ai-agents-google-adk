@@ -6,3 +6,4 @@ pydantic
 google-cloud-aiplatform[adk,agent_engines]
 chromadb
 pypdf
+pysqlite3-binary

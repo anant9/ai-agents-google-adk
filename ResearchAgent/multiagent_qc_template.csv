@@ -1,0 +1,2 @@
+Session ID,Timestamp,User Input,Compliance Verdict,Agent Routed To,Agent Output,QC_Compliance_Accuracy (1-5),QC_Routing_Correctness (1-5),QC_Output_Quality (1-5),QC_Overall_Cohesion (1-5),Notes: Code Version & Changes,Notes: State Impact
+EXAMPLE-ID,2026-03-18 12:00:00,Hello!,"{""allow"": true, ...}",GeneralRequestCoordinator,Hello! How can I help?,5,5,5,5,Initial baseline,N/A

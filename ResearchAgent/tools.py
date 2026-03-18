@@ -1,3 +1,10 @@
+try:
+    __import__('pysqlite3')
+    import sys
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+except ImportError:
+    pass
+
 import json
 import os
 import re
@@ -584,8 +591,9 @@ from pydantic import BaseModel, Field
 from typing import Dict, Any
 
 class ProjectBrief(BaseModel):
-    intent: str = Field(default="", description="The specific intent selected by the user (e.g., 'Visual Moodboards').")
-    parameters: Dict[str, Any] = Field(default_factory=dict, description="A dictionary of key-value pairs representing the answers to the intent's questions.")
+    concept_type: str = Field(default="", description="The concept type from the schema (e.g., 'product_concept', 'claim_concept').")
+    intent: str = Field(default="", description="The specific intent selected by the user (kept for backward compatibility).")
+    parameters: Dict[str, Any] = Field(default_factory=dict, description="A dictionary of key-value pairs representing the collected field values for the concept type.")
     miscellaneous: str = Field(default="", description="Any other constraints, requirements, or notes provided by the user.")
 
 async def update_brief(
@@ -601,9 +609,32 @@ async def update_brief(
     if isinstance(brief, dict):
         brief = ProjectBrief(**brief)
         
+    enriched_parameters = {}
+    if brief.concept_type:
+        from ResearchAgent.brief_config import CONCEPT_TYPE_CONFIG
+        config = CONCEPT_TYPE_CONFIG.get(brief.concept_type)
+        if config:
+            all_fields = config["common_fields"] + config["type_specific_fields"]
+            field_lookup = {f["key"]: f for f in all_fields}
+            
+            for key, value in brief.parameters.items():
+                field_metadata = field_lookup.get(key)
+                if field_metadata and "used_for_generation" in field_metadata:
+                    enriched_parameters[key] = {
+                        "value": value,
+                        "used_for_generation": field_metadata["used_for_generation"]
+                    }
+                else:
+                    enriched_parameters[key] = {"value": value}
+        else:
+            enriched_parameters = brief.parameters
+    else:
+        enriched_parameters = brief.parameters
+
     tool_context.state["brief"] = {
+        "concept_type": brief.concept_type,
         "intent": brief.intent,
-        "parameters": brief.parameters,
+        "parameters": enriched_parameters,
         "miscellaneous": brief.miscellaneous,
         "locked": locked
     }
